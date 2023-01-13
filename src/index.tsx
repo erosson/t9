@@ -2,7 +2,7 @@ import React from "react";
 import * as ReactDOM from "react-dom/client";
 import "./main.css";
 import * as T9 from "./t9";
-import rawWordsUrl from "./words.txt";
+import rawWordsUrl from "../data/words.txt";
 
 /**
  * Application entry point. Load the dictionary, then display the input.
