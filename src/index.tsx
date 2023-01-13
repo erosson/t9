@@ -3,21 +3,25 @@ import * as ReactDOM from "react-dom/client";
 import "./main.css";
 import * as T9 from "./t9";
 import rawWordsUrl from "../data/words.txt";
+import popularWordsUrl from "../data/20k.txt";
 
 /**
  * Application entry point. Load the dictionary, then display the input.
  */
 function App(): JSX.Element {
   const [index, setIndex] = React.useState<T9.Index | null>(null);
-  const [error, setError] = React.useState<string | null>(null);
+  const [error, setError] = React.useState<Error | null>(null);
 
   React.useEffect(() => {
     fetchDictionary().then(setIndex, setError);
   }, []);
+  if (error) {
+    console.error(error);
+  }
   return index ? (
     <Ready index={index} />
   ) : error ? (
-    <pre>{error}</pre>
+    <pre>{error.stack}</pre>
   ) : (
     <Loading />
   );
@@ -32,9 +36,7 @@ function Ready(props: { index: T9.Index }): JSX.Element {
   const [nextIndex, setNextIndex] = React.useState(0);
 
   const nextWord = nextDigits.join("");
-  const nextStrings = nextWord
-    ? [...(props.index[nextWord] ?? []), nextWord]
-    : [];
+  const nextStrings = T9.words(props.index, nextWord).slice(0, 10);
   const nextString = nextStrings[nextIndex] ?? "";
 
   function pushNext(digit: Digit) {
@@ -224,9 +226,16 @@ const style: { [s: string]: React.CSSProperties } = {
  * blank screen while the app loads.
  */
 async function fetchDictionary() {
-  const response = await fetch(rawWordsUrl);
-  const text = await response.text();
-  return T9.indexFromWords(text.split("\n"));
+  const [dict, popular] = await Promise.all([
+    fetch(rawWordsUrl)
+      .then((r) => r.text())
+      .then((r) => r.split("\n")),
+    fetch(popularWordsUrl)
+      .then((r) => r.text())
+      .then((r) => r.split("\n")),
+    ,
+  ]);
+  return T9.buildIndex({ dict, popular });
 }
 
 const digits = [1, 2, 3, 4, 5, 6, 7, 8, 9, "*", 0, "#"] as const;

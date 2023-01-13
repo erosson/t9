@@ -1,0 +1,166 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test input: 463: 463 1`] = `
+[
+  {
+    "source": "popular-words",
+    "word": "god",
+  },
+  {
+    "source": "popular-words",
+    "word": "inf",
+  },
+  {
+    "source": "popular-words",
+    "word": "ind",
+  },
+  {
+    "source": "popular-words",
+    "word": "imf",
+  },
+  {
+    "source": "popular-words",
+    "word": "gnd",
+  },
+  {
+    "source": "popular-prefix",
+    "word": "information",
+  },
+  {
+    "source": "popular-prefix",
+    "word": "index",
+  },
+  {
+    "source": "popular-prefix",
+    "word": "industry",
+  },
+  {
+    "source": "popular-prefix",
+    "word": "individual",
+  },
+  {
+    "source": "popular-prefix",
+    "word": "india",
+  },
+]
+`;
+
+exports[`test input: 4636: 4636 1`] = `
+[
+  {
+    "source": "popular-words",
+    "word": "info",
+  },
+  {
+    "source": "popular-words",
+    "word": "indo",
+  },
+  {
+    "source": "popular-prefix",
+    "word": "information",
+  },
+  {
+    "source": "popular-prefix",
+    "word": "informed",
+  },
+  {
+    "source": "popular-prefix",
+    "word": "indonesia",
+  },
+  {
+    "source": "popular-prefix",
+    "word": "indoor",
+  },
+  {
+    "source": "popular-prefix",
+    "word": "inform",
+  },
+  {
+    "source": "popular-prefix",
+    "word": "informational",
+  },
+  {
+    "source": "popular-prefix",
+    "word": "informal",
+  },
+  {
+    "source": "popular-prefix",
+    "word": "informative",
+  },
+]
+`;
+
+exports[`test input: 6666: 6666 1`] = `
+[
+  {
+    "source": "popular-words",
+    "word": "moon",
+  },
+  {
+    "source": "popular-words",
+    "word": "noon",
+  },
+  {
+    "source": "popular-words",
+    "word": "mono",
+  },
+  {
+    "source": "popular-prefix",
+    "word": "monopoly",
+  },
+  {
+    "source": "popular-prefix",
+    "word": "monogram",
+  },
+  {
+    "source": "popular-prefix",
+    "word": "moonlight",
+  },
+  {
+    "source": "popular-prefix",
+    "word": "monoclonal",
+  },
+  {
+    "source": "popular-prefix",
+    "word": "monophonic",
+  },
+  {
+    "source": "popular-prefix",
+    "word": "monmouth",
+  },
+  {
+    "source": "dict-prefix",
+    "word": "Monmouth's",
+  },
+]
+`;
+
+exports[`test input: 43556: 43556 1`] = `
+[
+  {
+    "source": "popular-words",
+    "word": "hello",
+  },
+  {
+    "source": "dict-prefix",
+    "word": "Hellman",
+  },
+  {
+    "source": "dict-prefix",
+    "word": "Hellman's",
+  },
+  {
+    "source": "numeric",
+    "word": "43556",
+  },
+]
+`;
+
+exports[`test input: 666666666666: 666666666666 1`] = `
+[
+  {
+    "source": "numeric",
+    "word": "666666666666",
+  },
+]
+`;

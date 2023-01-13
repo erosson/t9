@@ -9,25 +9,88 @@ export type Digit = number;
 export type Word = string;
 
 /**
- * given a T9-encoded string, find all possible dictionary words for it
+ * given a T9-encoded word, find some matching dictionary words
  */
-export type Index = { [code: Word]: string[] };
+export type Index = { [code: Word]: IndexEntry };
 
 /**
- * build an index from a list of dictionary words
+ * Matching dictionary words for a T9 string
  */
-export function indexFromWords(words: string[]): Index {
+type IndexEntry = {
+  /**
+   * Commonly-used exact matches for this input, ordered by popularity. Rank these first, in order
+   */
+  popular: IndexEntrySource;
+
+  /**
+   * Uncommonly-used exact matches for this input, unordered. Rank these last
+   */
+  dict: IndexEntrySource;
+};
+type IndexEntrySource = {
+  /**
+   * Exact matches
+   */
+  words: string[];
+  /**
+   * This input's a prefix of these other inputs, suggest them too
+   */
+  prefix: Word[];
+};
+function emptySource(): IndexEntrySource {
+  return { words: [], prefix: [] };
+}
+
+export function buildIndex(source: {
+  popular: Iterable<string>;
+  dict: Iterable<string>;
+}): Index {
+  const popular = buildSource(source.popular, (s, w) => s !== "" && w !== "");
+  const dict = buildSource(
+    source.dict,
+    (s, w) => s !== "" && w !== "" && !popular[w]?.words?.length
+  );
   const index: Index = {};
-  for (let word of words) {
-    if (word === "") continue;
-    const t9 = fromWord(word);
-    index[t9] = index[t9] || [];
-    // no dupes
-    if (index[t9].findIndex((w) => w === word) < 0) {
-      index[t9].push(word);
+  // merge sources, grouping by word
+  const keys = Object.keys(popular).concat(Object.keys(dict));
+  for (let key of Array.from(keys)) {
+    if (!(key in index)) {
+      index[key] = {
+        popular: popular[key] ?? emptySource(),
+        dict: dict[key] ?? emptySource(),
+      };
     }
   }
   return index;
+}
+function buildSource(
+  words: Iterable<string>,
+  filter: (s: string, w: Word) => boolean
+): { [w: Word]: IndexEntrySource } {
+  const index: { [w: Word]: IndexEntrySource } = {};
+  for (let word of words) {
+    let t9 = fromWord(word);
+    if (filter(word, t9)) {
+      index[t9] = index[t9] || emptySource();
+      // no dupes
+      if (index[t9].words.findIndex((w) => w === word) < 0) {
+        index[t9].words.push(word);
+      }
+
+      for (let prefix of prefixes(t9)) {
+        index[prefix] = index[prefix] || emptySource();
+        index[prefix].prefix.push(t9);
+      }
+    }
+  }
+  return index;
+}
+
+function prefixes(word: Word): Word[] {
+  return range(word.length - 1).map((i) => word.slice(0, i));
+}
+function range(n: number): number[] {
+  return Array.from(Array(n).keys());
 }
 
 /**
@@ -64,4 +127,33 @@ export function fromWord(word: string): Word {
     .map((l) => byLetter[l])
     .filter((t9) => !!t9)
     .join("");
+}
+
+type Result = { word: string; source: string };
+
+/**
+ * Given an index and some input, rank the possible words.
+ */
+export function ranking(index: Index, input: Word): Result[] {
+  if (!input) return [];
+  const numeric: Result = { word: input, source: "numeric" };
+  const data = index[input];
+  if (!data) return [numeric];
+  const popularPrefix = data.popular.prefix.flatMap(
+    (p) => index[p].popular.words
+  );
+  const dictPrefix = data.dict.prefix.flatMap((p) =>
+    p.length >= 3 ? index[p].dict.words : []
+  );
+  return [
+    data.popular.words.map((word) => ({ word, source: "popular-words" })),
+    popularPrefix.map((word) => ({ word, source: "popular-prefix" })),
+    data.dict.words.map((word) => ({ word, source: "dict-words" })),
+    dictPrefix.map((word) => ({ word, source: "dict-prefix" })),
+    numeric,
+  ].flat();
+}
+
+export function words(index: Index, input: Word): string[] {
+  return ranking(index, input).map((r) => r.word);
 }
