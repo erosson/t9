@@ -3,6 +3,14 @@ html,body {
     padding: 0;
 }
 
+/**
+ * fallback for places `dvh` isn't supported
+ */
+.root-fallback {
+    height: 100dvh;
+    height: 100vh;
+}
+
 @keyframes cursor-blink {
   0% {
     opacity: 0;

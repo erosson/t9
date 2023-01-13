@@ -71,7 +71,7 @@ function Ready(props: { index: T9.Index }): JSX.Element {
     }
   }
   return (
-    <div style={style.root}>
+    <div style={style.root} className="root-fallback">
       <div style={{ flex: 1, overflow: "auto" }}>
         <div style={{ padding: "1em" }}>
           <span style={{ whiteSpace: "pre-wrap" }}>{text}</span>{" "}
@@ -149,7 +149,7 @@ function Button(props: { digit: Digit; onClick: () => void }): JSX.Element {
 const style: { [s: string]: React.CSSProperties } = {
   root: {
     border: "1px solid gray",
-    height: "100vh",
+    height: "100dvh",
     display: "flex",
     flexFlow: "column",
     boxSizing: "border-box",
