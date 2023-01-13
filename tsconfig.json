@@ -5,6 +5,7 @@
     "strict": true,
     "module": "es6",
     "target": "es5",
+    "lib": ["es2019", "dom"],
     "jsx": "react",
     "moduleResolution": "node",
     "allowJs": true
