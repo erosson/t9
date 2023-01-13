@@ -1,0 +1,10 @@
+html,body {
+    margin: 0;
+    padding: 0;
+}
+
+@keyframes cursor-blink {
+  0% {
+    opacity: 0;
+  }
+}
