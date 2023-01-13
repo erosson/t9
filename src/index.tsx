@@ -19,7 +19,7 @@ function App(): JSX.Element {
   ) : error ? (
     <pre>{error}</pre>
   ) : (
-    <div>loading...</div>
+    <Loading />
   );
 }
 
@@ -92,15 +92,48 @@ function Ready(props: { index: T9.Index }): JSX.Element {
         ) : null}
       </div>
 
-      <div style={{ display: "flex", flexFlow: "column" }}>
-        {digitGrid.map((row, r) => (
-          <div key={r} style={style.buttonRow}>
-            {row.map((d) => (
-              <Button key={d} digit={d} onClick={() => pushNext(d)} />
-            ))}
-          </div>
-        ))}
+      <Keypad
+        style={{ display: "flex", flexFlow: "column" }}
+        pushNext={pushNext}
+      />
+    </div>
+  );
+}
+
+function Loading(): JSX.Element {
+  return (
+    <div style={style.root} className="root-fallback">
+      <div style={{ flex: 1, overflow: "auto", color: "gray", padding: "1em" }}>
+        loading...
       </div>
+      <Keypad
+        style={{ display: "flex", flexFlow: "column" }}
+        disabled={true}
+        pushNext={() => {}}
+      />
+    </div>
+  );
+}
+
+function Keypad(props: {
+  style?: React.CSSProperties;
+  disabled?: boolean;
+  pushNext: (d: Digit) => void;
+}): JSX.Element {
+  return (
+    <div style={props.style ?? {}}>
+      {digitGrid.map((row, r) => (
+        <div key={r} style={style.buttonRow}>
+          {row.map((d) => (
+            <KeypadButton
+              key={d}
+              digit={d}
+              disabled={props.disabled ?? false}
+              onClick={() => props.pushNext(d)}
+            />
+          ))}
+        </div>
+      ))}
     </div>
   );
 }
@@ -133,9 +166,17 @@ function WordList(props: {
 /**
  * One of the input buttons at the bottom of the screen
  */
-function Button(props: { digit: Digit; onClick: () => void }): JSX.Element {
+function KeypadButton(props: {
+  digit: Digit;
+  disabled?: boolean;
+  onClick: () => void;
+}): JSX.Element {
   return (
-    <button style={style.button} onClick={props.onClick}>
+    <button
+      style={style.button}
+      disabled={props.disabled ?? false}
+      onClick={props.onClick}
+    >
       <h3>{digitToLabel(props.digit)}</h3>
       <div>{props.digit}</div>
     </button>
