@@ -1,5 +1,0 @@
-tasks:
-  - before: |
-      apt-get install wamerican
-      yarn
-    command: yarn start

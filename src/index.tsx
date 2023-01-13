@@ -2,8 +2,7 @@ import React from "react";
 import * as ReactDOM from "react-dom/client";
 import "./main.css";
 import * as T9 from "./t9";
-// @ts-ignore typescript doesn't understand this, but webpack does
-import rawWords from "raw-loader!/usr/share/dict/words";
+import rawWordsUrl from "./words.txt";
 
 const style = {
   button: { flex: 1, padding: "2em" },
@@ -20,7 +19,29 @@ const style = {
   },
 };
 
-function App(props: { index: T9.Index }): JSX.Element {
+async function fetchDictionary() {
+  const response = await fetch(rawWordsUrl);
+  const text = await response.text();
+  return T9.indexFromWords(text.split("\n"));
+}
+
+function App(): JSX.Element {
+  const [index, setIndex] = React.useState<T9.Index | null>(null);
+  const [error, setError] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    fetchDictionary().then(setIndex, setError);
+  }, []);
+  return index ? (
+    <Ready index={index} />
+  ) : error ? (
+    <pre>{error}</pre>
+  ) : (
+    <div>loading...</div>
+  );
+}
+
+function Ready(props: { index: T9.Index }): JSX.Element {
   const [text, setText] = React.useState<string>("");
   const [nextDigits, setNextDigits] = React.useState<number[]>([]);
   const [nextIndex, setNextIndex] = React.useState(0);
@@ -162,7 +183,6 @@ function main() {
   const rootEl = document.getElementById("root");
   if (!rootEl) throw new Error("no root");
   const root = ReactDOM.createRoot(rootEl);
-  const index = T9.indexFromWords(rawWords.split("\n"));
-  root.render(<App index={index} />);
+  root.render(<App />);
 }
 main();
